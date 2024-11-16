@@ -1,31 +1,21 @@
-version: "3.8"
+version: '3.8'
 
 services:
   mariadb-backup:
-    build: .
+    build:
+      context: .
+      args:
+        DB_HOST_ORIG: ${DB_HOST_ORIG}
+        DB_PORT_ORIG: ${DB_PORT_ORIG}
+        DB_USER_ORIG: ${DB_USER_ORIG}
+        DB_PASS_ORIG: ${DB_PASS_ORIG}
+        DB_NAME_ORIG: ${DB_NAME_ORIG}
+        DB_HOST_DEST: ${DB_HOST_DEST}
+        DB_PORT_DEST: ${DB_PORT_DEST}
+        DB_USER_DEST: ${DB_USER_DEST}
+        DB_PASS_DEST: ${DB_PASS_DEST}
+        DB_NAME_DEST: ${DB_NAME_DEST}
     container_name: mariadb-backup
-    environment:
-      # Credenciales de la base de datos de origen
-      - DB_HOST_ORIG=mariadb_host_origen
-      - DB_USER_ORIG=usuario_origen
-      - DB_PASS_ORIG=contraseña_origen
-      - DB_NAME_ORIG=nombre_base_datos_origen
-
-      # Credenciales de la base de datos de destino
-      - DB_HOST_DEST=mariadb_host_destino
-      - DB_USER_DEST=usuario_destino
-      - DB_PASS_DEST=contraseña_destino
-      - DB_NAME_DEST=nombre_base_datos_destino
-
-    volumes:
-      # Mapeo del directorio local para almacenar los backups
-      - /ruta/local/donde/guardar/backups:/backups
-
-    # Para que el contenedor ejecute cron en primer plano
-    command: ["crond", "-f"]
-
-    # Opcional: Limitar la memoria y los recursos si es necesario
-    mem_limit: 512m
-    cpu_limit: 1
-
+    env_file:
+      - .env
     restart: unless-stopped
